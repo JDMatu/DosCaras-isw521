@@ -1,64 +1,15 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useThemeStore } from '@/stores/theme'
 import { useCatalogStore } from '@/stores/catalog'
-import { useDebouncedRef } from '@/composables/useDebouncedRef'
-import * as searchService from '@/services/search'
-import type { SearchViewResult } from '@/types/api'
 
 const router = useRouter()
 const auth = useAuthStore()
 const theme = useThemeStore()
 const catalog = useCatalogStore()
 
-const searchTerm = ref('')
-
-// Spec: the global search fires the API call after a 300ms debounce. The
-// navbar shows quick results in a dropdown; Enter opens the full results page.
-const debouncedTerm = useDebouncedRef('', 300)
-const quickResults = ref<SearchViewResult[]>([])
-const quickOpen = ref(false)
-const quickLoading = ref(false)
-const searchBoxRef = ref<HTMLElement | null>(null)
-let searchRequestId = 0
-
-watch(searchTerm, (value) => {
-  debouncedTerm.value = value
-  if (value.trim() === '') {
-    quickOpen.value = false
-    quickResults.value = []
-  }
-})
-
-watch(debouncedTerm, async (value) => {
-  const q = value.trim()
-  if (q === '') return
-  const requestId = ++searchRequestId
-  quickLoading.value = true
-  try {
-    const response = await searchService.search(q)
-    if (requestId !== searchRequestId) return
-    quickResults.value = response.views.slice(0, 5)
-    quickOpen.value = true
-  } catch {
-    // Quick suggestions are best-effort; the full search page reports errors.
-    if (requestId === searchRequestId) quickOpen.value = false
-  } finally {
-    if (requestId === searchRequestId) quickLoading.value = false
-  }
-})
-
-function sideTitle(result: SearchViewResult): string {
-  return result.sides.find((s) => s.type === 'SIDE')?.title ?? 'Publicación'
-}
-
-function openQuickResult(id: string): void {
-  quickOpen.value = false
-  searchTerm.value = ''
-  void router.push({ name: 'view-detail', params: { id } })
-}
 const mobileMenuOpen = ref(false)
 const categoriesOpen = ref(false)
 const userMenuOpen = ref(false)
@@ -68,14 +19,6 @@ const userMenuRef = ref<HTMLElement | null>(null)
 const isDark = computed(() => theme.preference === 'dark' ||
   (theme.preference === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches))
 
-function submitSearch(): void {
-  const q = searchTerm.value.trim()
-  if (q === '') return
-  mobileMenuOpen.value = false
-  quickOpen.value = false
-  void router.push({ name: 'search', query: { q } })
-}
-
 function closeMenus(event: MouseEvent): void {
   const target = event.target as Node
   if (categoriesMenuRef.value && !categoriesMenuRef.value.contains(target)) {
@@ -83,9 +26,6 @@ function closeMenus(event: MouseEvent): void {
   }
   if (userMenuRef.value && !userMenuRef.value.contains(target)) {
     userMenuOpen.value = false
-  }
-  if (searchBoxRef.value && !searchBoxRef.value.contains(target)) {
-    quickOpen.value = false
   }
 }
 
@@ -145,60 +85,6 @@ onBeforeUnmount(() => document.removeEventListener('click', closeMenus))
           </li>
         </ul>
       </div>
-
-      <!-- Global search -->
-      <form ref="searchBoxRef" role="search" class="relative min-w-0 flex-1" @submit.prevent="submitSearch" @keydown.esc="quickOpen = false">
-        <label for="global-search" class="sr-only">Buscar publicaciones</label>
-        <div class="relative">
-          <svg viewBox="0 0 20 20" fill="currentColor" class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-stone-400" aria-hidden="true">
-            <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clip-rule="evenodd" />
-          </svg>
-          <input
-            id="global-search"
-            v-model="searchTerm"
-            type="search"
-            placeholder="Buscar publicaciones…"
-            autocomplete="off"
-            :aria-expanded="quickOpen"
-            aria-haspopup="listbox"
-            class="w-full rounded-full border border-stone-300 bg-stone-50 py-2 pl-9 pr-3 text-sm text-stone-900 placeholder-stone-400 dark:border-stone-600 dark:bg-stone-900 dark:text-stone-100 dark:placeholder-stone-500"
-            @focus="quickResults.length > 0 && searchTerm.trim() !== '' ? (quickOpen = true) : undefined"
-          />
-        </div>
-        <div
-          v-if="quickOpen"
-          class="absolute inset-x-0 top-full z-50 mt-1 overflow-hidden rounded-lg border border-stone-200 bg-white shadow-lg dark:border-stone-700 dark:bg-stone-900"
-        >
-          <p v-if="quickLoading" class="px-4 py-3 text-sm text-stone-500 dark:text-stone-400" role="status">
-            Buscando…
-          </p>
-          <template v-else>
-            <p v-if="quickResults.length === 0" class="px-4 py-3 text-sm text-stone-500 dark:text-stone-400">
-              Sin resultados rápidos para «{{ searchTerm.trim() }}»
-            </p>
-            <ul v-else>
-              <li v-for="result in quickResults" :key="result.id">
-                <button
-                  type="button"
-                  class="block w-full px-4 py-2 text-left text-sm text-stone-700 hover:bg-stone-100 dark:text-stone-200 dark:hover:bg-stone-800"
-                  @click="openQuickResult(result.id)"
-                >
-                  <span class="block truncate font-medium">{{ sideTitle(result) }}</span>
-                  <span class="block truncate text-xs text-stone-500 dark:text-stone-400">
-                    {{ result.category.name }} · {{ result.author.name }}
-                  </span>
-                </button>
-              </li>
-            </ul>
-            <button
-              type="submit"
-              class="block w-full border-t border-stone-200 px-4 py-2 text-left text-sm font-medium text-amber-800 hover:bg-stone-100 dark:border-stone-700 dark:text-amber-400 dark:hover:bg-stone-800"
-            >
-              Ver todos los resultados →
-            </button>
-          </template>
-        </div>
-      </form>
 
       <!-- Theme toggle -->
       <button
