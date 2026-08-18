@@ -22,7 +22,7 @@ export const router = createRouter({
     {
       path: '/',
       name: 'board',
-      component: () => import('@/views/NotFoundView.vue'),
+      component: () => import('@/views/BoardView.vue'),
       meta: { title: 'Tablero' },
     },
     {
