@@ -28,13 +28,13 @@ export const router = createRouter({
     {
       path: '/login',
       name: 'login',
-      component: () => import('@/views/NotFoundView.vue'),
+      component: () => import('@/views/LoginView.vue'),
       meta: { guestOnly: true, title: 'Iniciar sesión' },
     },
     {
       path: '/register',
       name: 'register',
-      component: () => import('@/views/NotFoundView.vue'),
+      component: () => import('@/views/RegisterView.vue'),
       meta: { guestOnly: true, title: 'Crear cuenta' },
     },
     {
