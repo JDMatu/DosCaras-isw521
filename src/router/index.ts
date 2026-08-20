@@ -46,7 +46,7 @@ export const router = createRouter({
     {
       path: '/views/:id',
       name: 'view-detail',
-      component: () => import('@/views/NotFoundView.vue'),
+      component: () => import('@/views/ViewDetailView.vue'),
       meta: { title: 'Publicación' },
     },
     {
