@@ -37,10 +37,10 @@ export const router = createRouter({
       component: () => import('@/views/RegisterView.vue'),
       meta: { guestOnly: true, title: 'Crear cuenta' },
     },
-    {
+        {
       path: '/views/new',
       name: 'view-create',
-      component: () => import('@/views/NotFoundView.vue'),
+      component: () => import('@/views/ViewFormView.vue'),
       meta: { requiresAuth: true, title: 'Nueva publicación' },
     },
     {
@@ -52,7 +52,7 @@ export const router = createRouter({
     {
       path: '/views/:id/edit',
       name: 'view-edit',
-      component: () => import('@/views/NotFoundView.vue'),
+      component: () => import('@/views/ViewFormView.vue'),
       meta: { requiresAuth: true, title: 'Editar publicación' },
     },
     {
