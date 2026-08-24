@@ -1,9 +1,5 @@
 <script setup lang="ts">
-/**
- * Card for a search hit. GET /api/search returns a reduced view shape (sides
- * carry only `type` and `title`, no sources or reaction counts), so this can't
- * reuse ViewCard — it renders exactly what that payload provides.
- */
+
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { formatDate } from '@/lib/format'

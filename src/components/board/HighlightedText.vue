@@ -1,9 +1,5 @@
 <script setup lang="ts">
-/**
- * Renders `text` wrapping every occurrence of the searched words in <mark>.
- * Splitting into segments instead of using v-html keeps the API response out
- * of the HTML parser (no injection surface).
- */
+
 import { computed } from 'vue'
 
 const props = defineProps<{ text: string; term: string }>()

@@ -1,12 +1,5 @@
 <script setup lang="ts">
-/**
- * Pantalla 13 — Resultados de búsqueda.
- *
- * `q` in the URL is the source of truth so results are shareable/reloadable.
- * Typing updates it through a 300 ms debounce (router.replace, to avoid one
- * history entry per keystroke) and that URL change is what triggers the API
- * call. An empty term never reaches the API — it would answer 400.
- */
+
 import { computed, onMounted, ref, watch } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import HighlightedText from '@/components/board/HighlightedText.vue'
