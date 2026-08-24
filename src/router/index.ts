@@ -58,19 +58,19 @@ export const router = createRouter({
     {
       path: '/categories/:id',
       name: 'category',
-      component: () => import('@/views/NotFoundView.vue'),
+      component: () => import('@/views/CategoryView.vue'),
       meta: { title: 'Categoría' },
     },
     {
       path: '/authors/:id',
       name: 'author',
-      component: () => import('@/views/NotFoundView.vue'),
+      component: () => import('@/views/AuthorView.vue'),
       meta: { title: 'Autor' },
     },
     {
       path: '/search',
       name: 'search',
-      component: () => import('@/views/NotFoundView.vue'),
+      component: () => import('@/views/SearchView.vue'),
       meta: { title: 'Búsqueda' },
     },
     {
