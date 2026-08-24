@@ -70,7 +70,7 @@ export const router = createRouter({
     {
       path: '/search',
       name: 'search',
-      component: () => import('@/views/NotFoundView.vue'),
+      component: () => import('@/views/SearchView.vue'),
       meta: { title: 'Búsqueda' },
     },
     {
