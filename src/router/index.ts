@@ -88,7 +88,7 @@ export const router = createRouter({
     {
       path: '/admin/categories',
       name: 'admin-categories',
-      component: () => import('@/views/NotFoundView.vue'),
+      component: () => import('@/views/admin/AdminCategoriesView.vue'),
       meta: { requiresAuth: true, requiresSuperadmin: true, title: 'Gestión de categorías' },
     },
     {
