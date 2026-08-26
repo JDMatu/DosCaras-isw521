@@ -82,7 +82,7 @@ export const router = createRouter({
     {
       path: '/admin/users',
       name: 'admin-users',
-      component: () => import('@/views/NotFoundView.vue'),
+      component: () => import('@/views/admin/AdminUsersView.vue'),
       meta: { requiresAuth: true, requiresSuperadmin: true, title: 'Gestión de usuarios' },
     },
     {
