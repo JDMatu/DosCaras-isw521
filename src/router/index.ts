@@ -94,7 +94,7 @@ export const router = createRouter({
     {
       path: '/admin/moderation',
       name: 'admin-moderation',
-      component: () => import('@/views/NotFoundView.vue'),
+      component: () => import('@/views/admin/AdminModerationView.vue'),
       meta: { requiresAuth: true, requiresSuperadmin: true, title: 'Moderación' },
     },
     {
