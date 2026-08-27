@@ -1,5 +1,4 @@
 <script setup lang="ts">
-/** Colored status pill shared by the three admin tables. */
 export type BadgeTone = 'green' | 'red' | 'amber' | 'gray'
 
 defineProps<{ tone: BadgeTone }>()

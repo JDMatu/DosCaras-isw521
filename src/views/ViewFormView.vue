@@ -1,19 +1,4 @@
 <script setup lang="ts">
-/**
- * Screen 5 — create (`/views/new`) and edit (`/views/:id/edit`) a publication.
- *
- * PDF ↔ API divergence #1: the spec asks for a "publication title (max 120
- * chars)", but `PoliticalView` has NO title column — the API stores one title
- * per side (`ViewSide.title`). The 120-character limit with a live counter is
- * therefore applied to each side's title instead.
- *
- * PDF ↔ API divergence #2: the spec asks for 400 errors mapped inline to the
- * failing field, but the backend answers with
- * `{ error: 'Validation failed', details: { fieldErrors: { body: [...] } } }`
- * — a flat list of zod messages with no field names — so they are rendered as
- * a global alert list. Everything checkable client-side is validated inline
- * before submitting so this path is a last resort.
- */
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import BaseButton from '@/components/ui/BaseButton.vue'
@@ -57,8 +42,6 @@ const editId = computed(() =>
 )
 const isEdit = computed(() => editId.value !== null)
 
-/* ---------------------------------------------------------------- form state */
-
 const categoryId = ref('')
 const sideTitle = ref('')
 const sideDescription = ref('')
@@ -80,8 +63,6 @@ const apiValidationMessages = ref<string[]>([])
 const categoryOptions = computed<SelectOption[]>(() =>
   catalog.categories.map((category) => ({ value: category.id, label: category.name })),
 )
-
-/* ---------------------------------------------------------------- validation */
 
 interface FormErrors {
   categoryId?: string
@@ -125,8 +106,6 @@ const isValid = computed(
 function fieldError(key: keyof FormErrors): string | undefined {
   return showErrors.value ? errors.value[key] : undefined
 }
-
-/* -------------------------------------------------- draft (create mode only) */
 
 interface DraftPayload {
   categoryId: string
@@ -220,8 +199,6 @@ function dismissDraftPrompt(): void {
   restorePromptOpen.value = false
 }
 
-/* ------------------------------------------------------------ dirty tracking */
-
 const snapshot = computed(() => JSON.stringify(buildDraft()))
 const pristine = ref(snapshot.value)
 const isDirty = computed(() => snapshot.value !== pristine.value)
@@ -229,15 +206,12 @@ const isDirty = computed(() => snapshot.value !== pristine.value)
 let draftTimer: ReturnType<typeof setTimeout> | undefined
 
 watch(snapshot, () => {
-  // Spec §3.5: only the "new publication" form is persisted as a draft.
   if (isEdit.value || restorePromptOpen.value || !isDirty.value) return
   clearTimeout(draftTimer)
   draftTimer = setTimeout(() => cacheWrite<DraftPayload>(CACHE_KEYS.draft, buildDraft()), 600)
 })
 
 onBeforeUnmount(() => clearTimeout(draftTimer))
-
-/* ------------------------------------------------------------------- loading */
 
 async function loadForEdit(id: string): Promise<void> {
   loadingView.value = true
@@ -322,8 +296,6 @@ watch(editId, (id, previous) => {
   init()
 })
 
-/* ---------------------------------------------------------------- submitting */
-
 function toSideInput(title: string, description: string, drafts: SourceDraft[]): CreateViewSideInput {
   return {
     title: title.trim(),
@@ -339,7 +311,6 @@ function toSideInput(title: string, description: string, drafts: SourceDraft[]):
   }
 }
 
-/** Flattens `{ formErrors, fieldErrors: { body: [...] } }` into a message list. */
 function validationMessages(details: unknown): string[] {
   if (typeof details !== 'object' || details === null) return []
   const messages: string[] = []
@@ -401,8 +372,6 @@ async function submit(): Promise<void> {
     submitting.value = false
   }
 }
-
-/* -------------------------------------------------------------------- cancel */
 
 const cancelPromptOpen = ref(false)
 

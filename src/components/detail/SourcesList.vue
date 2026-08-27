@@ -1,11 +1,4 @@
 <script setup lang="ts">
-/**
- * Reference sources belonging to one side of a view.
- * - YOUTUBE renders a playable embed; if the stored URL does not parse as a
- *   YouTube link it degrades to a plain external link.
- * - DOCUMENT URLs may be relative (`/uploads/...`, as returned by the upload
- *   endpoint), so they are made absolute against the API base URL.
- */
 import { absoluteUploadUrl } from '@/services/uploads'
 import { youtubeEmbedUrl, youtubeVideoId } from '@/lib/youtube'
 import type { Source, SourceType } from '@/types/api'

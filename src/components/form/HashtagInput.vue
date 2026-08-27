@@ -1,11 +1,4 @@
 <script setup lang="ts">
-/**
- * Tag input for hashtags with autocomplete from `GET /api/hashtags?q=`.
- *
- * The API normalises hashtags to lowercase without a leading `#` (and rejects
- * more than 10 per view, 50 characters each), so the same normalisation is
- * applied here and the chips are displayed exactly as they will be stored.
- */
 import { computed, onBeforeUnmount, ref, useId, watch } from 'vue'
 import * as hashtagsService from '@/services/hashtags'
 
@@ -47,7 +40,6 @@ const describedBy = computed(() => {
 
 const shownError = computed(() => props.error ?? (localError.value === '' ? undefined : localError.value))
 
-/** API rule: trim, drop leading `#`, lowercase. */
 function normalize(raw: string): string {
   return raw.trim().replace(/^#+/, '').trim().toLowerCase()
 }

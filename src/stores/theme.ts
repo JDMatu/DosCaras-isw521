@@ -32,5 +32,5 @@ export const useThemeStore = defineStore('theme', () => {
     setPreference(dark ? 'light' : 'dark')
   }
 
-  return { preference, setPreference, toggle }
+  return { preference, toggle }
 })

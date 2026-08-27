@@ -1,12 +1,4 @@
 <script setup lang="ts">
-/**
- * Dynamic list of sources for one side of a view. At least one source per side
- * is required by the API, so the last remaining row cannot be deleted.
- *
- * DOCUMENT rows can upload a file to `POST /api/uploads/document`; the endpoint
- * answers with a RELATIVE url (`/uploads/...`) but the create/update endpoints
- * validate `url` with `z.string().url()`, so the url is stored absolute.
- */
 import { ref, useId } from 'vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseField from '@/components/ui/BaseField.vue'
@@ -28,7 +20,6 @@ import {
 const props = defineProps<{
   legend: string
   description: string
-  /** When true, per-row validation messages are rendered. */
   showErrors: boolean
   disabled?: boolean
 }>()
@@ -39,8 +30,6 @@ const fieldsetId = useId()
 const uploading = ref<Record<number, boolean>>({})
 const uploadErrors = ref<Record<number, string>>({})
 
-/** Native select instead of BaseSelect: BaseSelect's model is a plain `string`
- * and would widen `draft.type` away from the `SourceType` union. */
 const typeOptions: { value: SourceType; label: string }[] = [
   { value: 'LINK', label: 'Enlace' },
   { value: 'YOUTUBE', label: 'Video de YouTube' },
