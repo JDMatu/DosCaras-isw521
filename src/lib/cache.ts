@@ -24,7 +24,6 @@ interface CacheEntry<T> {
 
 export interface CacheReadResult<T> {
   value: T
-  /** True when the entry exists but its TTL elapsed (usable as offline fallback). */
   stale: boolean
 }
 
@@ -37,10 +36,6 @@ export function cacheWrite<T>(key: CacheKey, value: T): void {
   }
 }
 
-/**
- * Reads an entry. With a TTL, `stale` marks expired entries — callers decide
- * whether to use them (offline fallback) or refetch. Without TTL, never stale.
- */
 export function cacheRead<T>(key: CacheKey, ttlMs?: number): CacheReadResult<T> | null {
   const raw = localStorage.getItem(key)
   if (raw === null) return null

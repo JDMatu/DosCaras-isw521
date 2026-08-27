@@ -1,7 +1,3 @@
-/**
- * Local (unsaved) representation of a `Source` row inside the create/edit
- * form, plus the client-side validation shared by the form and its editor.
- */
 import type { Source, SourceType } from '@/types/api'
 
 export interface SourceDraft {
@@ -10,12 +6,10 @@ export interface SourceDraft {
   type: SourceType
   url: string
   label: string
-  /** Feedback about a document uploaded through this row, if any. */
   fileName: string | null
   fileSize: number | null
 }
 
-/** Serializable subset persisted in the `lasdoscaras_draft` cache entry. */
 export interface SourceDraftData {
   type: SourceType
   url: string

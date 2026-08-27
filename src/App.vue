@@ -16,8 +16,6 @@ const connection = useConnectionStore()
 const toasts = useToastsStore()
 const favorites = useFavoritesStore()
 
-// A 401 anywhere clears the session (auth store); react by informing the user
-// and sending them to login, preserving where they were.
 watch(
   () => auth.sessionExpired,
   (expired) => {
@@ -28,8 +26,6 @@ watch(
   },
 )
 
-// Reconnection (browser `online` event or first successful API call after a
-// failure): refresh the shared catalogs; views subscribe to the same tick.
 watch(
   () => connection.becameOnline,
   () => {

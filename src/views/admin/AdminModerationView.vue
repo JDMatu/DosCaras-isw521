@@ -1,13 +1,4 @@
 <script setup lang="ts">
-/**
- * Pantalla 9 — Panel superadmin: moderación de contenido (`/admin/moderation`).
- * GET /api/admin/views?status=&page=&limit= returns the full view shape, so the
- * table can show category, author and reaction counts without extra requests.
- *
- * PATCH publish/unpublish answer with a **reduced** record (BareView: no
- * category/author/sides/counts), so only `status` is copied back into the row —
- * replacing the whole object would wipe the data the table renders.
- */
 import { computed, onMounted, ref, watch } from 'vue'
 import { RouterLink } from 'vue-router'
 import BaseButton from '@/components/ui/BaseButton.vue'
@@ -36,7 +27,6 @@ const loading = ref(false)
 const error = ref('')
 const forbidden = ref(false)
 
-/** '' means "todas": the API returns every status when `status` is omitted. */
 const statusFilter = ref('')
 
 const STATUS_OPTIONS = [

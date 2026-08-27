@@ -1,11 +1,4 @@
 <script setup lang="ts">
-/**
- * Create/edit form for a category. The API model has a single editable field
- * (`name`), so the form has one input. Client-side validation: non-empty and
- * not duplicated (case-insensitive) against `existingNames`, which the parent
- * builds from the loaded list excluding the row being edited. Server conflicts
- * (409) arrive through `serverError` and are shown inline on the same field.
- */
 import { ref, watch } from 'vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseInput from '@/components/ui/BaseInput.vue'

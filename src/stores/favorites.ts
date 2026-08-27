@@ -3,10 +3,6 @@ import { ref } from 'vue'
 import { CACHE_KEYS, cacheRead, cacheRemove, cacheWrite } from '@/lib/cache'
 import * as viewsService from '@/services/views'
 
-/**
- * Favorite view ids, synced with the API on login and cached under
- * `lasdoscaras_favorites` so cards can paint the heart state instantly.
- */
 export const useFavoritesStore = defineStore('favorites', () => {
   const ids = ref<Set<string>>(new Set(cacheRead<string[]>(CACHE_KEYS.favorites)?.value ?? []))
 
@@ -18,7 +14,6 @@ export const useFavoritesStore = defineStore('favorites', () => {
     cacheWrite(CACHE_KEYS.favorites, [...ids.value])
   }
 
-  /** Loads the full id list from the API (called right after login). */
   async function sync(): Promise<void> {
     const { favorites } = await viewsService.myFavoriteIds()
     ids.value = new Set(favorites)
@@ -53,5 +48,5 @@ export const useFavoritesStore = defineStore('favorites', () => {
     cacheRemove(CACHE_KEYS.favorites)
   }
 
-  return { ids, isFavorite, sync, add, remove, toggle, clear }
+  return { ids, isFavorite, sync, toggle, clear }
 })

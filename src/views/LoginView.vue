@@ -32,9 +32,8 @@ async function submit(): Promise<void> {
   submitting.value = true
   try {
     await auth.login(email.value.trim(), password.value)
-    // Spec: load favorite ids right after login so hearts paint correctly.
     favorites.sync().catch(() => {
-      // Non-fatal: hearts will populate when connectivity returns.
+      // Favorites remain available from the local cache while offline.
     })
     toasts.success(`¡Bienvenido, ${auth.user?.name}!`)
     const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : null

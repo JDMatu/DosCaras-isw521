@@ -3,7 +3,6 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useThemeStore } from '@/stores/theme'
-import { useCatalogStore } from '@/stores/catalog'
 import { useDebouncedRef } from '@/composables/useDebouncedRef'
 import * as searchService from '@/services/search'
 import type { SearchViewResult } from '@/types/api'
@@ -11,7 +10,6 @@ import type { SearchViewResult } from '@/types/api'
 const router = useRouter()
 const auth = useAuthStore()
 const theme = useThemeStore()
-const catalog = useCatalogStore()
 
 const searchTerm = ref('')
 
@@ -58,9 +56,7 @@ function openQuickResult(id: string): void {
   void router.push({ name: 'view-detail', params: { id } })
 }
 const mobileMenuOpen = ref(false)
-const categoriesOpen = ref(false)
 const userMenuOpen = ref(false)
-const categoriesMenuRef = ref<HTMLElement | null>(null)
 const userMenuRef = ref<HTMLElement | null>(null)
 
 const isDark = computed(() => theme.preference === 'dark' ||
@@ -76,9 +72,6 @@ function submitSearch(): void {
 
 function closeMenus(event: MouseEvent): void {
   const target = event.target as Node
-  if (categoriesMenuRef.value && !categoriesMenuRef.value.contains(target)) {
-    categoriesOpen.value = false
-  }
   if (userMenuRef.value && !userMenuRef.value.contains(target)) {
     userMenuOpen.value = false
   }
@@ -89,7 +82,6 @@ function closeMenus(event: MouseEvent): void {
 
 function onMenuKeydown(event: KeyboardEvent): void {
   if (event.key === 'Escape') {
-    categoriesOpen.value = false
     userMenuOpen.value = false
   }
 }
@@ -113,38 +105,6 @@ onBeforeUnmount(() => document.removeEventListener('click', closeMenus))
         <span class="hidden sm:inline">Las Dos Caras</span>
       </RouterLink>
 
-      <!-- Categories dropdown (desktop) -->
-      <div ref="categoriesMenuRef" class="relative hidden md:block" @keydown="onMenuKeydown">
-        <button
-          type="button"
-          class="rounded-md px-3 py-2 text-sm font-medium text-stone-700 hover:bg-stone-100 dark:text-stone-200 dark:hover:bg-stone-800"
-          :aria-expanded="categoriesOpen"
-          aria-haspopup="true"
-          @click="categoriesOpen = !categoriesOpen"
-        >
-          Categorías
-          <span aria-hidden="true" class="ml-1 text-xs">▾</span>
-        </button>
-        <ul
-          v-if="categoriesOpen"
-          class="absolute left-0 mt-1 max-h-80 w-56 overflow-y-auto rounded-lg border border-stone-200 bg-white py-1 shadow-lg dark:border-stone-700 dark:bg-stone-900"
-        >
-          <li v-if="catalog.categories.length === 0" class="px-4 py-2 text-sm text-stone-500 dark:text-stone-400">
-            No hay categorías disponibles
-          </li>
-          <li v-for="category in catalog.categories" :key="category.id">
-            <RouterLink
-              :to="{ name: 'category', params: { id: category.id } }"
-              class="block px-4 py-2 text-sm text-stone-700 hover:bg-stone-100 dark:text-stone-200 dark:hover:bg-stone-800"
-              @click="categoriesOpen = false"
-            >
-              {{ category.name }}
-            </RouterLink>
-          </li>
-        </ul>
-      </div>
-
-      <!-- Global search -->
       <form ref="searchBoxRef" role="search" class="relative min-w-0 flex-1" @submit.prevent="submitSearch" @keydown.esc="quickOpen = false">
         <label for="global-search" class="sr-only">Buscar publicaciones</label>
         <div class="relative">
@@ -198,7 +158,6 @@ onBeforeUnmount(() => document.removeEventListener('click', closeMenus))
         </div>
       </form>
 
-      <!-- Theme toggle -->
       <button
         type="button"
         class="rounded-md p-2 text-stone-600 hover:bg-stone-100 dark:text-stone-300 dark:hover:bg-stone-800"
@@ -213,7 +172,6 @@ onBeforeUnmount(() => document.removeEventListener('click', closeMenus))
         </svg>
       </button>
 
-      <!-- Desktop session controls -->
       <div class="hidden items-center gap-2 md:flex">
         <template v-if="!auth.isAuthenticated">
           <RouterLink
@@ -285,7 +243,6 @@ onBeforeUnmount(() => document.removeEventListener('click', closeMenus))
         </template>
       </div>
 
-      <!-- Mobile menu toggle -->
       <button
         type="button"
         class="rounded-md p-2 text-stone-600 hover:bg-stone-100 md:hidden dark:text-stone-300 dark:hover:bg-stone-800"
@@ -300,24 +257,8 @@ onBeforeUnmount(() => document.removeEventListener('click', closeMenus))
       </button>
     </nav>
 
-    <!-- Mobile menu -->
     <div v-if="mobileMenuOpen" class="border-t border-stone-200 px-4 py-3 md:hidden dark:border-stone-800">
-      <p class="mb-1 px-1 text-xs font-semibold uppercase tracking-wide text-stone-500 dark:text-stone-400">Categorías</p>
-      <ul class="mb-3 max-h-48 overflow-y-auto">
-        <li v-if="catalog.categories.length === 0" class="px-1 py-1 text-sm text-stone-500 dark:text-stone-400">
-          No hay categorías disponibles
-        </li>
-        <li v-for="category in catalog.categories" :key="category.id">
-          <RouterLink
-            :to="{ name: 'category', params: { id: category.id } }"
-            class="block rounded px-1 py-1.5 text-sm text-stone-700 hover:bg-stone-100 dark:text-stone-200 dark:hover:bg-stone-800"
-            @click="mobileMenuOpen = false"
-          >
-            {{ category.name }}
-          </RouterLink>
-        </li>
-      </ul>
-      <div class="flex flex-col gap-1 border-t border-stone-200 pt-3 dark:border-stone-800">
+      <div class="flex flex-col gap-1">
         <template v-if="!auth.isAuthenticated">
           <RouterLink :to="{ name: 'login' }" class="rounded px-1 py-1.5 text-sm font-medium text-stone-700 dark:text-stone-200" @click="mobileMenuOpen = false">
             Iniciar sesión

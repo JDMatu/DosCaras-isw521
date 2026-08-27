@@ -38,7 +38,6 @@ const views = ref<PoliticalView[]>([])
 const total = ref(0)
 const loading = ref(false)
 const error = ref('')
-/** True while the grid shows the offline snapshot instead of fresh data. */
 const fromCache = ref(false)
 
 function readString(value: unknown): string {
@@ -174,7 +173,6 @@ watch(state, (value) => {
   void load()
 })
 
-// Reconnection (browser `online` or the first API success after a failure).
 watch(
   () => connection.becameOnline,
   () => {

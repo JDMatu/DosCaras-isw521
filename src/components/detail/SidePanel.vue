@@ -1,8 +1,4 @@
 <script setup lang="ts">
-/**
- * One of the two perspectives of a view (Postura / Contrapostura), with its
- * own reaction bar and its own sources — the two panels never share state.
- */
 import ReactionBar from './ReactionBar.vue'
 import SourcesList from './SourcesList.vue'
 import type { ReactionResponse, ViewSide } from '@/types/api'

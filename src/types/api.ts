@@ -64,7 +64,6 @@ export interface ViewSide {
   myReaction: ReactionType | null
 }
 
-/** Full view shape returned by GET/POST/PUT /api/views and /api/admin/views. */
 export interface PoliticalView {
   id: string
   categoryId: string
@@ -113,7 +112,6 @@ export interface CreateViewInput {
   hashtags?: string[]
 }
 
-/** PATCH publish/unpublish return the bare Prisma record without includes. */
 export interface BareView {
   id: string
   categoryId: string
@@ -160,8 +158,6 @@ export interface UploadResponse {
   size: number
 }
 
-/** GET /api/search returns views in a reduced shape: sides carry only
- * type/title, and there are no sources, counts, nor hashtags (verified live). */
 export interface SearchViewResult {
   id: string
   categoryId: string
@@ -193,9 +189,4 @@ export interface PaginatedUsers {
   page: number
   limit: number
   users: ApiUser[]
-}
-
-export interface ValidationDetails {
-  formErrors: string[]
-  fieldErrors: Partial<Record<'body' | 'query' | 'params', string[]>>
 }

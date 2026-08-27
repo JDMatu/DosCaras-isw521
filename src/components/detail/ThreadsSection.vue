@@ -1,15 +1,4 @@
 <script setup lang="ts">
-/**
- * Comment threads of a view: expandable list, a form to open a new thread and
- * a form to comment (or reply, one level deep) inside each thread.
- *
- * Moderation divergence: the course spec asks for an "AI moderation" warning
- * and a "pending moderation" indicator per comment. The real API exposes NO
- * moderation field on `Comment` (see the Prisma schema: id, threadId, userId,
- * parentId, content, createdAt) and no moderation endpoint, so we show a
- * static advisory notice and deliberately do NOT invent a per-comment
- * "pendiente" state that the backend could never confirm.
- */
 import { onMounted, ref, watch } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import BaseButton from '@/components/ui/BaseButton.vue'
@@ -54,7 +43,6 @@ async function load(expandId?: string): Promise<void> {
   try {
     const { threads: fetched } = await threadsService.listThreads(props.viewId)
     threads.value = fetched
-    // Seed one draft slot per thread so the textarea always has a bound string.
     for (const thread of fetched) {
       if (commentDrafts.value[thread.id] === undefined) commentDrafts.value[thread.id] = ''
     }
@@ -122,7 +110,6 @@ async function addComment(threadId: string): Promise<void> {
   }
 }
 
-/** Passed down to CommentItem; resolves to true when the reply was stored. */
 async function submitReply(threadId: string, parentId: string, content: string): Promise<boolean> {
   try {
     await threadsService.createComment(props.viewId, threadId, { content, parentId })

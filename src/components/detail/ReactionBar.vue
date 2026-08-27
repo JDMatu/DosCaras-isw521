@@ -1,15 +1,4 @@
 <script setup lang="ts">
-/**
- * Like/dislike bar for ONE side of a view. Each side keeps its own counters,
- * so this component is mounted twice per detail page with independent state.
- *
- * API divergence (verified against the backend):
- * `POST /api/views/:id/sides/{a|b}/{like|dislike}` is an UPSERT and there is
- * NO DELETE endpoint for reactions — a reaction can be switched
- * (like <-> dislike) but never removed. Pressing the already-active reaction
- * would just re-send the same value, so that button is rendered disabled with
- * `aria-pressed="true"` instead of acting as a toggle.
- */
 import { computed, ref } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'

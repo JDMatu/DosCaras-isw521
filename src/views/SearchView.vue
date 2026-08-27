@@ -86,7 +86,6 @@ watch(
   },
 )
 
-/** Enter skips the debounce so the search feels immediate. */
 function submit(): void {
   goToTerm(inputTerm.value)
 }

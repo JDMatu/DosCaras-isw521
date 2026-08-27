@@ -1,11 +1,4 @@
 <script setup lang="ts">
-/**
- * Screen 4 — publication detail (`/views/:id`), public in read-only mode.
- *
- * The API has no title of its own for a `PoliticalView`: the two `ViewSide`
- * rows carry the titles, so the SIDE ("Postura") title is used as the page
- * heading. Sides arrive in no guaranteed order, hence the filtering by `type`.
- */
 import { computed, ref, watch } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import BaseButton from '@/components/ui/BaseButton.vue'
@@ -60,7 +53,6 @@ async function load(): Promise<void> {
   try {
     const { view: fetched } = await viewsService.getView(viewId.value)
     view.value = fetched
-    // Spec §3.5: every visited publication goes into the local FIFO history.
     history.record({
       id: fetched.id,
       titulo: fetched.sides.find((s) => s.type === 'SIDE')?.title ?? 'Publicación',
@@ -75,7 +67,6 @@ async function load(): Promise<void> {
   }
 }
 
-/** Applies the counters returned by the reaction endpoint to one side. */
 function applyReaction(type: SideType, response: ReactionResponse): void {
   const target = view.value?.sides.find((s) => s.type === type)
   if (target === undefined) return
@@ -84,7 +75,6 @@ function applyReaction(type: SideType, response: ReactionResponse): void {
   target.myReaction = response.myReaction
 }
 
-/** Superadmin publish / unpublish. */
 const pendingStatusAction = ref<'publish' | 'unpublish' | null>(null)
 const statusSubmitting = ref(false)
 
@@ -110,7 +100,6 @@ async function confirmStatusChange(): Promise<void> {
 
 watch(viewId, () => void load(), { immediate: true })
 
-// Spec §3.5: reload fresh data as soon as connectivity comes back.
 watch(
   () => connection.becameOnline,
   () => {

@@ -17,7 +17,6 @@ export function unbanUser(id: string): Promise<{ user: ApiUser }> {
   return http.patch<{ user: ApiUser }>(`/api/admin/users/${encodeURIComponent(id)}/unban`)
 }
 
-/** Includes soft-deleted categories (deletedAt set). */
 export function listAllCategories(): Promise<{ categories: Category[] }> {
   return http.get<{ categories: Category[] }>('/api/admin/categories')
 }
@@ -32,7 +31,6 @@ export function updateCategory(id: string, name: string): Promise<{ category: Ca
   })
 }
 
-/** Soft delete; responds 204 with no body. */
 export function deleteCategory(id: string): Promise<void> {
   return http.delete<void>(`/api/admin/categories/${encodeURIComponent(id)}`)
 }

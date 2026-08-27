@@ -1,7 +1,4 @@
 <script setup lang="ts">
-/**
- * Pantalla 8 — Panel superadmin: gestión de categorías (`/admin/categories`).
- */
 import { computed, onMounted, ref } from 'vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
@@ -11,7 +8,6 @@ import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
 import CategoryFormModal from '@/components/admin/CategoryFormModal.vue'
 import StatusBadge from '@/components/admin/StatusBadge.vue'
 import { ApiError, errorMessage } from '@/lib/http'
-import { formatDate } from '@/lib/format'
 import * as adminService from '@/services/admin'
 import { useToastsStore } from '@/stores/toasts'
 import type { Category } from '@/types/api'
@@ -39,9 +35,9 @@ const existingNames = computed(() =>
     .map((category) => category.name),
 )
 
-const activeCount = computed(
-  () => categories.value.filter((category) => category.deletedAt === null).length,
-)
+const activeCategories = computed(() => categories.value.filter((category) => category.deletedAt === null))
+
+const activeCount = computed(() => activeCategories.value.length)
 
 function sortByName(list: Category[]): Category[] {
   return [...list].sort((a, b) => a.name.localeCompare(b.name, 'es'))
@@ -157,7 +153,7 @@ onMounted(load)
     <ErrorState v-else-if="error" :message="error" :retryable="!forbidden" @retry="load" />
 
     <EmptyState
-      v-else-if="categories.length === 0"
+      v-else-if="activeCategories.length === 0"
       title="Todavía no hay categorías"
       description="Creá la primera categoría para que los autores puedan clasificar sus publicaciones."
     >
@@ -166,14 +162,13 @@ onMounted(load)
 
     <template v-else>
       <p class="text-sm text-stone-500 dark:text-stone-400">
-        {{ activeCount }} {{ activeCount === 1 ? 'categoría activa' : 'categorías activas' }} de
-        {{ categories.length }} en total (se incluyen las eliminadas).
+        {{ activeCount }} {{ activeCount === 1 ? 'categoría activa' : 'categorías activas' }}
       </p>
 
       <div class="overflow-x-auto rounded-xl border border-stone-200 dark:border-stone-700">
         <table class="w-full min-w-[36rem] border-collapse text-left text-sm">
           <caption class="sr-only">
-            Categorías registradas, incluidas las eliminadas
+            Categorías registradas activas
           </caption>
           <thead class="bg-stone-100 text-xs uppercase tracking-wide text-stone-600 dark:bg-stone-800 dark:text-stone-300">
             <tr>
@@ -183,21 +178,17 @@ onMounted(load)
             </tr>
           </thead>
           <tbody class="divide-y divide-stone-200 dark:divide-stone-700">
-            <tr v-for="category in categories" :key="category.id" class="bg-white dark:bg-stone-900">
+            <tr v-for="category in activeCategories" :key="category.id" class="bg-white dark:bg-stone-900">
               <th scope="row" class="px-4 py-3 font-medium text-stone-900 dark:text-stone-100">
                 {{ category.name }}
               </th>
               <td class="px-4 py-3">
-                <StatusBadge :tone="category.deletedAt === null ? 'green' : 'gray'">
-                  {{
-                    category.deletedAt === null
-                      ? 'Activa'
-                      : `Eliminada el ${formatDate(category.deletedAt)}`
-                  }}
+                <StatusBadge :tone="'green'">
+                  Activa
                 </StatusBadge>
               </td>
               <td class="px-4 py-3">
-                <div v-if="category.deletedAt === null" class="flex justify-end gap-2">
+                <div class="flex justify-end gap-2">
                   <BaseButton variant="secondary" @click="openEdit(category)">
                     Editar
                   </BaseButton>
@@ -205,9 +196,6 @@ onMounted(load)
                     Eliminar
                   </BaseButton>
                 </div>
-                <p v-else class="text-right text-xs text-stone-500 dark:text-stone-400">
-                  El API no permite restaurar una categoría eliminada.
-                </p>
               </td>
             </tr>
           </tbody>

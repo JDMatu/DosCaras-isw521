@@ -19,11 +19,6 @@ const activating = ref(false)
 const globalError = ref('')
 const fieldErrors = ref<{ name?: string; email?: string; password?: string; passwordConfirm?: string }>({})
 
-/**
- * The API keeps new accounts PENDING and returns the activation token in the
- * register response (no email delivery exists). After registering we show an
- * explicit activation step that calls GET /api/auth/activate/:token.
- */
 const activationToken = ref<string | null>(null)
 const registeredEmail = ref('')
 

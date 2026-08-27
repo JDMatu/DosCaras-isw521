@@ -13,7 +13,6 @@ export const useAuthStore = defineStore('auth', () => {
   const persisted = cacheRead<PersistedAuth>(CACHE_KEYS.auth)?.value ?? null
   const token = ref<string | null>(persisted?.token ?? null)
   const user = ref<ApiUser | null>(persisted?.user ?? null)
-  /** Set when a 401 forces a logout, so the login page can explain why. */
   const sessionExpired = ref(false)
 
   const isAuthenticated = computed(() => token.value !== null)
@@ -50,7 +49,6 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  /** Refreshes profile data on app start; a failed refresh is non-fatal. */
   async function refreshProfile(): Promise<void> {
     if (token.value === null) return
     try {
@@ -71,7 +69,6 @@ export const useAuthStore = defineStore('auth', () => {
     isSuperadmin,
     login,
     logout,
-    setSession,
     handleUnauthorized,
     refreshProfile,
   }

@@ -1,10 +1,4 @@
 <script setup lang="ts">
-/**
- * Pantalla 7 — Panel superadmin: gestión de usuarios (`/admin/users`).
- * GET /api/admin/users?search=&page=&limit= → { total, page, limit, users }.
- * Ban/unban return the updated user, so the row is patched in place instead of
- * refetching the whole page.
- */
 import { computed, onMounted, ref, watch } from 'vue'
 import BaseInput from '@/components/ui/BaseInput.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
@@ -51,7 +45,6 @@ const loading = ref(false)
 const error = ref('')
 const forbidden = ref(false)
 
-/** Spec §12: 300 ms debounce before hitting the API. */
 const search = useDebouncedRef('', 300)
 
 const pendingUser = ref<ApiUser | null>(null)

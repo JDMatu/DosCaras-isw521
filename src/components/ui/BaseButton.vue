@@ -3,7 +3,7 @@ import LoadingSpinner from './LoadingSpinner.vue'
 
 withDefaults(
   defineProps<{
-    variant?: 'primary' | 'secondary' | 'danger' | 'ghost'
+    variant?: 'primary' | 'secondary' | 'danger'
     type?: 'button' | 'submit'
     loading?: boolean
     disabled?: boolean
@@ -18,8 +18,6 @@ const variantClasses: Record<string, string> = {
     'border border-stone-300 bg-white text-stone-800 hover:bg-stone-100 disabled:opacity-50 dark:border-stone-600 dark:bg-stone-800 dark:text-stone-100 dark:hover:bg-stone-700',
   danger:
     'bg-red-700 text-white hover:bg-red-800 disabled:bg-red-700/50 dark:bg-red-600 dark:hover:bg-red-500',
-  ghost:
-    'text-stone-700 hover:bg-stone-200/70 disabled:opacity-50 dark:text-stone-200 dark:hover:bg-stone-700/70',
 }
 </script>
 

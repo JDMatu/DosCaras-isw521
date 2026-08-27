@@ -1,13 +1,4 @@
 <script setup lang="ts">
-/**
- * A comment plus its replies. The API only supports ONE nesting level
- * (`parentId` must point at a top-level comment of the same thread), so
- * replies are rendered flat inside their parent and never expose a reply form
- * of their own.
- *
- * `submitReply` is passed as a typed callback instead of an emit because the
- * form needs to await the request to know whether it can close itself.
- */
 import { ref } from 'vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseTextarea from '@/components/ui/BaseTextarea.vue'
@@ -16,7 +7,6 @@ import type { Comment } from '@/types/api'
 
 const props = defineProps<{
   comment: Comment
-  /** Top-level comments accept replies; nested replies do not. */
   canReply: boolean
   submitReply?: (parentId: string, content: string) => Promise<boolean>
 }>()
