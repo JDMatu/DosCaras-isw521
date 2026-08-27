@@ -24,7 +24,6 @@ export function updateView(id: string, input: CreateViewInput): Promise<{ view: 
   return http.put<{ view: PoliticalView }>(`/api/views/${encodeURIComponent(id)}`, { body: input })
 }
 
-/** Returns a bare record without includes — refetch the view for full data. */
 export function unpublishView(id: string): Promise<{ view: BareView }> {
   return http.patch<{ view: BareView }>(`/api/views/${encodeURIComponent(id)}/unpublish`)
 }
